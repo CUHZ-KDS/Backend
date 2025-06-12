@@ -1,0 +1,21 @@
+# OS 관련
+.DS_Store
+Thumbs.db
+
+# IDE 설정 (IntelliJ, VSCode 등)
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.springBeans
+
+# Gradle 빌드 결과물
+/build/
+.gradle/
+out/
+bin/
+
+# 민감 정보 및 설정
+.env
+*.local
