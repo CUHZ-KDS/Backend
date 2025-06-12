@@ -1,72 +1,50 @@
 package com.moti.backend.global.exception;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.moti.backend.global.dto.response.ApiResponse;
+import com.moti.backend.global.dto.response.ErrorResponse;
 import com.moti.backend.global.type.StatusCode;
-
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // JSON 파싱/타입 변환 실패
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        log.error("Message not readable exception occurred", ex);
-
-        return ResponseEntity
-                .status(StatusCode.BAD_REQUEST.getStatus())
-                .body(ApiResponse.error(StatusCode.BAD_REQUEST, List.of()));
+    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        log.warn("잘못된 JSON 요청: {}", ex.getMessage());
+        return buildErrorResponse(StatusCode.BAD_REQUEST, "요청 형식이 올바르지 않습니다.");
     }
 
-    // Bean Validation 실패
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        log.error("Validation error occurred: {}", ex.getBindingResult());
-
-        List<ApiResponse.FieldError> errors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> ApiResponse.FieldError.builder()
-                        .field(error.getField())
-                        //.value(String.valueOf(error.getRejectedValue())) // 보안상 제외 가능
-                        .reason(error.getDefaultMessage())
-                        .build())
-                .collect(Collectors.toList());
-
-        return ResponseEntity
-                .status(StatusCode.INVALID_INPUT.getStatus())
-                .body(ApiResponse.error(StatusCode.INVALID_INPUT, errors));
+    protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        log.warn("유효성 검사 실패: {}", ex.getBindingResult());
+        return buildErrorResponse(StatusCode.INVALID_INPUT, "입력값이 유효하지 않습니다.");
     }
 
-    // 타입 변환 실패 (예: int 파라미터에 문자 입력 등)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<ApiResponse<Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        log.warn("TypeMismatchException caught: {}", ex.getMessage());
-
-        String message = String.format("DTO 파라미터 값 '%s'는 허용되지 않는 값입니다.", ex.getValue());
-        return ResponseEntity
-                .status(StatusCode.BAD_REQUEST.getStatus())
-                .body(ApiResponse.error(StatusCode.BAD_REQUEST.getCode(), message, List.of()));
+    protected ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String message = String.format("파라미터 '%s' 값 '%s'는 허용되지 않는 타입입니다.", ex.getName(), ex.getValue());
+        log.warn("타입 불일치: {}", message);
+        return buildErrorResponse(StatusCode.BAD_REQUEST, message);
     }
 
-    // 알 수 없는 예외
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ApiResponse<Object>> handleException(Exception ex) {
-        log.error("Unhandled exception occurred", ex);
+    protected ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        log.error("예상치 못한 서버 에러 발생", ex);
+        return buildErrorResponse(StatusCode.INTERNAL_ERROR);
+    }
 
-        return ResponseEntity
-                .status(StatusCode.INTERNAL_ERROR.getStatus())
-                .body(ApiResponse.error(StatusCode.INTERNAL_ERROR, List.of()));
+    // 공통 응답 생성기
+    private ResponseEntity<ErrorResponse> buildErrorResponse(StatusCode statusCode) {
+        return ResponseEntity.status(statusCode.getStatus()).body(ErrorResponse.of(statusCode));
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(StatusCode statusCode, String customMessage) {
+        return ResponseEntity.status(statusCode.getStatus()).body(ErrorResponse.of(statusCode, customMessage));
     }
 }
