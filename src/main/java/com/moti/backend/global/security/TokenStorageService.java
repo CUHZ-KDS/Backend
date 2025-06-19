@@ -31,7 +31,7 @@ public class TokenStorageService {
 
 		if (ttl > 0) {
 			redisTemplate.opsForValue().set(key, accessToken, Duration.ofSeconds(ttl));
-			log.info("Access token stored for member: {}", memberId);
+			log.info("Access 토큰이 저장되었습니다. member: {}", memberId);
 		}
 	}
 
@@ -42,7 +42,7 @@ public class TokenStorageService {
 
 		if (ttl > 0) {
 			redisTemplate.opsForValue().set(key, refreshToken, Duration.ofSeconds(ttl));
-			log.info("Refresh token stored for member: {}", memberId);
+			log.info("Refresh 토큰이 저장되었습니다. member: {}", memberId);
 		}
 	}
 
