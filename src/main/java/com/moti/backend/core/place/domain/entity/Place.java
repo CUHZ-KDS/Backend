@@ -2,8 +2,6 @@ package com.moti.backend.core.place.domain.entity;
 
 import com.moti.backend.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,8 +11,6 @@ import static lombok.AccessLevel.*;
 @Table(name = "place")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PRIVATE)
-@Builder
 public class Place extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

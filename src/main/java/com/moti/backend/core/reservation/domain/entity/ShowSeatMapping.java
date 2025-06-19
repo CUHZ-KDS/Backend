@@ -4,21 +4,16 @@ import com.moti.backend.core.place.domain.entity.Seat;
 import com.moti.backend.core.reservation.domain.type.SeatStatus;
 import com.moti.backend.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
-import static lombok.AccessLevel.PRIVATE;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Table(name = "show_seat_mapping")
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@AllArgsConstructor(access = PRIVATE)
-@Builder
 public class ShowSeatMapping extends BaseTimeEntity {
 
     @Id
