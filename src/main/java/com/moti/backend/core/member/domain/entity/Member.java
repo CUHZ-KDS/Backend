@@ -1,8 +1,6 @@
 package com.moti.backend.core.member.domain.entity;
 
-import java.util.UUID;
-
-import com.moti.backend.core.member.domain.SocialType;
+import com.moti.backend.core.member.domain.type.SocialType;
 import com.moti.backend.global.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
