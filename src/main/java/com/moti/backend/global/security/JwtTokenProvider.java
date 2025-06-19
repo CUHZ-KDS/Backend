@@ -1,5 +1,6 @@
 package com.moti.backend.global.security;
 
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
@@ -12,13 +13,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
-	private final String secretKey;
+	private final Key secretKey;
 	private final long accessTokenExpiration;
 	private final long refreshTokenExpiration;
 
@@ -26,7 +29,9 @@ public class JwtTokenProvider {
 		@Value("${jwt.secret}") String secretKey,
 		@Value("${jwt.access-token-expiration}") long accessTokenExpiration,
 		@Value("${jwt.refresh-expiration}") long refreshTokenExpiration) {
-		this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+
+		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		this.secretKey = Keys.hmacShaKeyFor(keyBytes);
 		this.accessTokenExpiration = accessTokenExpiration;
 		this.refreshTokenExpiration = refreshTokenExpiration;
 	}
@@ -42,7 +47,7 @@ public class JwtTokenProvider {
 			.claim("tokenType", "ACCESS")
 			.setIssuedAt(now)
 			.setExpiration(expiry)
-			.signWith(SignatureAlgorithm.HS512, secretKey)
+			.signWith(secretKey, SignatureAlgorithm.HS512)
 			.compact();
 	}
 
@@ -55,7 +60,7 @@ public class JwtTokenProvider {
 			.claim("tokenType", "REFRESH")
 			.setIssuedAt(now)
 			.setExpiration(expiry)
-			.signWith(SignatureAlgorithm.HS512, secretKey)
+			.signWith(secretKey, SignatureAlgorithm.HS512)
 			.compact();
 	}
 
@@ -113,8 +118,9 @@ public class JwtTokenProvider {
 	}
 
 	private Claims parseClaims(String token) {
-		return Jwts.parser()
+		return Jwts.parserBuilder()
 			.setSigningKey(secretKey)
+			.build()
 			.parseClaimsJws(token)
 			.getBody();
 	}
