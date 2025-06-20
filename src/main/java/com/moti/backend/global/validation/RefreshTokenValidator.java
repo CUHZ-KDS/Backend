@@ -2,7 +2,7 @@ package com.moti.backend.global.validation;
 
 import org.springframework.stereotype.Component;
 
-import com.moti.backend.core.member.exception.InvalidRefreshTokenException;
+import com.moti.backend.global.exception.InvalidRefreshTokenException;
 import com.moti.backend.global.security.JwtTokenProvider;
 import com.moti.backend.global.security.TokenStorageService;
 

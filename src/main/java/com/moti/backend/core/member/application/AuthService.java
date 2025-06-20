@@ -1,19 +1,19 @@
 package com.moti.backend.core.member.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.moti.backend.core.member.domain.entity.Member;
-import com.moti.backend.core.member.exception.InvalidRefreshTokenException;
 import com.moti.backend.core.member.exception.MemberNotFoundException;
 import com.moti.backend.core.member.infrastructure.persistence.MemberRepository;
 import com.moti.backend.core.member.transfer.dto.LoginResponse;
 import com.moti.backend.core.member.transfer.dto.MemberResponse;
 import com.moti.backend.core.member.transfer.dto.RefreshTokenResponse;
 import com.moti.backend.global.security.JwtTokenProvider;
+import com.moti.backend.global.security.SecurityUtils;
 import com.moti.backend.global.security.TokenStorageService;
 import com.moti.backend.global.validation.RefreshTokenValidator;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +44,8 @@ public class AuthService {
 			.build();
 	}
 
-	public RefreshTokenResponse refreshToken(String refreshToken){
+	@Transactional(readOnly = true)
+	public RefreshTokenResponse refreshToken(String refreshToken) {
 		Long memberId = jwtTokenProvider.getMemberIdFromToken(refreshToken);
 
 		refreshTokenValidator.validateRefreshToken(refreshToken, memberId);
@@ -63,5 +64,11 @@ public class AuthService {
 			.refreshToken(newRefreshToken)
 			.member(MemberResponse.from(member))
 			.build();
+	}
+
+	public void logout() {
+		Member currentMember = SecurityUtils.getCurrentMember();
+		tokenStorageService.removeTokens(currentMember.getId());
+		log.info("사용자가 성공적으로 로그아웃되었습니다. 회원 ID: {}", currentMember.getId());
 	}
 }

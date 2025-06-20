@@ -1,6 +1,5 @@
-package com.moti.backend.core.member.exception;
+package com.moti.backend.global.exception;
 
-import com.moti.backend.global.exception.BusinessException;
 import com.moti.backend.global.type.StatusCode;
 
 public class InvalidRefreshTokenException extends BusinessException {
