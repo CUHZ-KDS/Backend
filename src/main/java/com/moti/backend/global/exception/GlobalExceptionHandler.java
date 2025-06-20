@@ -39,6 +39,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(StatusCode.INTERNAL_ERROR);
     }
 
+    @ExceptionHandler(BusinessException.class)
+    protected ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
+        log.warn("비즈니스 예외 발생: {}", ex.getMessage());
+        return buildErrorResponse(ex.getStatusCode(), ex.getMessage());
+    }
+
     // 공통 응답 생성기
     private ResponseEntity<ErrorResponse> buildErrorResponse(StatusCode statusCode) {
         return ResponseEntity.status(statusCode.getStatus()).body(ErrorResponse.of(statusCode));
