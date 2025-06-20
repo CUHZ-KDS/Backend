@@ -26,7 +26,7 @@ public class MemberResponse {
 	public static MemberResponse fromGuest(Member member) {
 		return new MemberResponse(
 			member.getId(),
-			null, // Guest는 email 노출 안함
+			null,
 			member.getNickname(),
 			member.getSocialType().name()
 		);
