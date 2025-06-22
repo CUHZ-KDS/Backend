@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,5 +24,11 @@ public class ShowController {
 	public ResponseEntity<ApiResponse<?>> getAllShows() {
 		ShowResponseDTO.InfoList shows = showService.getAllShows();
 		return ResponseEntity.ok(ApiResponse.success(shows));
+	}
+
+	@GetMapping("/{showId}")
+	public ResponseEntity<ApiResponse<?>> getShowDetail(@PathVariable Long showId) {
+		ShowResponseDTO.DetailInfo showDetail = showService.getShowDetail(showId);
+		return ResponseEntity.ok(ApiResponse.success(showDetail));
 	}
 }
