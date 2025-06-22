@@ -46,7 +46,7 @@ INSERT INTO seat (id, zone_id, seat_row, seat_column, status, created_at, modifi
 (18, 2, 3, 3, TRUE, NOW(), NOW());
 
 -- 공연 5개 생성 (모두 동일한 장소 사용) - 관리자 제거버전
-INSERT INTO `show` (id, place_id, title, category, start_date, end_date, ticket_start_date_time, ticket_end_date_time, min_age, running_time_minute, intermission_time, show_img, created_at, modified_at) VALUES
+INSERT INTO `show` (id, place_id, title, category, start_date, end_date, ticket_start_date_time, ticket_end_date_time, min_age, running_time_minute, intermission_time, show_img_url, created_at, modified_at) VALUES
 (1, 1, '공연 1', 'MUSICAL', '2025-07-01 00:00:00', '2025-07-10 23:59:59', '2025-06-20 14:00:00', '2025-06-30 23:59:59', 15, 120, 15, '/img/show1.png', NOW(), NOW()),
 (2, 1, '공연 2', 'MUSICAL', '2025-07-11 00:00:00', '2025-07-20 23:59:59', '2025-07-01 14:00:00', '2025-07-10 23:59:59', 12, 110, 10, '/img/show2.png', NOW(), NOW()),
 (3, 1, '공연 3', 'CONCERT', '2025-07-21 00:00:00', '2025-07-30 23:59:59', '2025-07-11 14:00:00', '2025-07-20 23:59:59', 18, 130, 20, '/img/show3.png', NOW(), NOW()),

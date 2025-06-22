@@ -41,7 +41,7 @@ public class ShowResponseDTO {
 				.minAge(show.getMinAge())
 				.runningTimeMinute(show.getRunningTimeMinute())
 				.intermissionTime(show.getIntermissionTime())
-				.imgSource(show.getShowImg())
+				.imgSource(show.getShowImgUrl())
 				.build();
 		}
 	}
@@ -75,7 +75,7 @@ public class ShowResponseDTO {
 				.minAge(show.getMinAge())
 				.runningTimeMinute(show.getRunningTimeMinute())
 				.intermissionTime(show.getIntermissionTime())
-				.imgSource(show.getShowImg())
+				.imgSource(show.getShowImgUrl())
 				.grade(grades.stream()
 					.map(GradeInfo::from)
 					.toList())
