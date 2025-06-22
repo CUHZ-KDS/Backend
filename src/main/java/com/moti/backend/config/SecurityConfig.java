@@ -28,7 +28,6 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/auth/guest-login").permitAll()
 				.requestMatchers("/api/v1/auth/refresh").permitAll()
 				.requestMatchers("/api/v1/auth/oauth-login/**").permitAll()
-				.requestMatchers("/api/v1/shows/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
