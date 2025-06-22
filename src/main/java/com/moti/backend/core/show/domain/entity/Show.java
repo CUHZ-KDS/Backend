@@ -20,8 +20,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 
 @Entity
-@Getter
 @Table(name = "`show`")
+@Getter
 public class Show extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
