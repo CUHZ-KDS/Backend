@@ -3,7 +3,6 @@ package com.moti.backend.core.show.transfer.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.moti.backend.core.show.domain.entity.Grade;
 import com.moti.backend.core.show.domain.entity.Show;
