@@ -1,0 +1,33 @@
+package com.moti.backend.core.member.application;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.moti.backend.core.member.domain.entity.Member;
+import com.moti.backend.core.member.domain.type.SocialType;
+import com.moti.backend.core.member.infrastructure.persistence.MemberRepository;
+import com.moti.backend.core.member.transfer.dto.MemberResponse;
+import com.moti.backend.global.security.SecurityUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+@Slf4j
+public class MemberService {
+
+	private final MemberRepository memberRepository;
+
+	public MemberResponse getCurrentMemberInfo() {
+		Member currentMember = SecurityUtils.getCurrentMember();
+
+		// Guest와 일반 사용자 구분하여 응답
+		if (currentMember.getSocialType() == SocialType.GUEST) {
+			return MemberResponse.fromGuest(currentMember);
+		} else {
+			return MemberResponse.from(currentMember);
+		}
+	}
+}

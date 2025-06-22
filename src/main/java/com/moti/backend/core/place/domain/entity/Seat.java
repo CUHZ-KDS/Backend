@@ -20,10 +20,10 @@ public class Seat extends BaseTimeEntity {
     @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
 
-    @Column(name = "row", nullable = false)
+    @Column(name = "seat_row", nullable = false)
     private int row;
 
-    @Column(name = "column", nullable = false)
+    @Column(name = "seat_column", nullable = false)
     private int column;
 
     @Column(name = "status", nullable = false)
