@@ -8,6 +8,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.moti.backend.global.security.JwtAuthenticationEntryPoint;
 import com.moti.backend.global.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -29,6 +31,9 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/auth/refresh").permitAll()
 				.requestMatchers("/api/v1/auth/oauth-login/**").permitAll()
 				.anyRequest().authenticated()
+			)
+			.exceptionHandling(exceptions -> exceptions
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint)
 			)
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
