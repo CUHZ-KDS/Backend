@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			} catch (JwtAuthenticationException e) {
 				log.warn("JWT 인증에 실패했습니다: {}", e.getMessage());
 				SecurityContextHolder.clearContext();
-				return;
+				throw e;
 			}
 		}
 
