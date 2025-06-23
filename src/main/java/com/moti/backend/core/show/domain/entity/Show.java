@@ -55,7 +55,7 @@ public class Show extends BaseTimeEntity {
 	@Column(nullable = false)
 	private Integer intermissionTime;
 
-	private String showImg;
+	private String showImgUrl;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
 	// @JoinColumn(name = "created_by", nullable = false)

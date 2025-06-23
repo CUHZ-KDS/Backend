@@ -3,7 +3,6 @@ package com.moti.backend.core.show.transfer.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.moti.backend.core.show.domain.entity.Grade;
 import com.moti.backend.core.show.domain.entity.Show;
@@ -28,7 +27,7 @@ public class ShowResponseDTO {
 		private Integer minAge;
 		private Integer runningTimeMinute;
 		private Integer intermissionTime;
-		private String imgSource;
+		private String showImgUrl;
 
 		public static SimpleInfo from(Show show) {
 			return SimpleInfo.builder()
@@ -42,7 +41,7 @@ public class ShowResponseDTO {
 				.minAge(show.getMinAge())
 				.runningTimeMinute(show.getRunningTimeMinute())
 				.intermissionTime(show.getIntermissionTime())
-				.imgSource(show.getShowImg())
+				.showImgUrl(show.getShowImgUrl())
 				.build();
 		}
 	}
@@ -61,7 +60,7 @@ public class ShowResponseDTO {
 		private Integer minAge;
 		private Integer runningTimeMinute;
 		private Integer intermissionTime;
-		private String imgSource;
+		private String showImgUrl;
 		private List<GradeInfo> grade;
 
 		public static DetailInfo from(Show show, List<Grade> grades) {
@@ -76,7 +75,7 @@ public class ShowResponseDTO {
 				.minAge(show.getMinAge())
 				.runningTimeMinute(show.getRunningTimeMinute())
 				.intermissionTime(show.getIntermissionTime())
-				.imgSource(show.getShowImg())
+				.showImgUrl(show.getShowImgUrl())
 				.grade(grades.stream()
 					.map(GradeInfo::from)
 					.toList())
