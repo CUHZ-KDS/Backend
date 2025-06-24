@@ -17,6 +17,7 @@ public enum StatusCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "C403", "접근 권한이 없습니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "C404", "요청한 리소스를 찾을 수 없습니다."),
     CONFLICT(HttpStatus.CONFLICT, "C409", "리소스 충돌이 발생했습니다."),
+    LOCK_FAILED(HttpStatus.CONFLICT, "C410", "좌석 락 획득에 실패했습니다."),
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "C422", "입력값이 유효하지 않습니다."),
     TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "C429", "요청이 너무 많습니다."),
 
