@@ -1,6 +1,7 @@
 package com.moti.backend.core.reservation.application;
 
 import com.moti.backend.core.member.domain.entity.Member;
+import com.moti.backend.core.member.exception.MemberNotFoundException;
 import com.moti.backend.core.member.infrastructure.persistence.MemberRepository;
 import com.moti.backend.core.order.domain.entity.Order;
 import com.moti.backend.core.order.infrastructure.OrderRepository;
@@ -8,6 +9,7 @@ import com.moti.backend.core.reservation.domain.entity.Reservation;
 import com.moti.backend.core.reservation.domain.entity.ShowSeatMapping;
 import com.moti.backend.core.reservation.domain.helper.OrderTokenGenerator;
 import com.moti.backend.core.reservation.domain.service.*;
+import com.moti.backend.core.reservation.exception.SeatHoldFailedException;
 import com.moti.backend.core.reservation.infrastructure.ReservationRepository;
 import com.moti.backend.core.reservation.infrastructure.ShowSeatMappingRepository;
 import com.moti.backend.core.reservation.transfer.CreateReservationRequest;
@@ -44,17 +46,12 @@ public class ReservationService {
             // show_seat_mapping hold로 상태 변경
             showSeats = showSeatLockService.lockAndHoldShowSeats(showSeatIds);
         } catch (Exception e) {
-            throw new BusinessException(StatusCode.LOCK_FAILED, "좌석 확보 실패");
+            throw new SeatHoldFailedException("좌석 확보 실패");
         }
 
         try {
             Member member = memberRepository.findById(1L)
-                    .orElseThrow(() -> new BusinessException(StatusCode.NOT_FOUND, "Member 를 찾을 수 없습니다."));
-
-            // DB 에서 발견한 좌석의 개수와 요청 받은 좌석의 식별자 개수가 다를 경우 예외 발생
-            if (showSeats.size() != showSeatIds.size()) {
-                throw new BusinessException(StatusCode.BAD_REQUEST, "예약할 수 없는 좌석이 포함되어있습니다.");
-            }
+                    .orElseThrow(() -> new MemberNotFoundException("예매 시도자를 시스템에서 찾을 수 없습니다."));
 
             // Reservation 레코드 생성
             // 예매한 좌석의 개수만큼 reservation 레코드 생성 및 저장
