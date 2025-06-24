@@ -13,6 +13,7 @@ import com.moti.backend.core.reservation.exception.SeatHoldFailedException;
 import com.moti.backend.core.reservation.infrastructure.ReservationRepository;
 import com.moti.backend.core.reservation.infrastructure.ShowSeatMappingRepository;
 import com.moti.backend.core.reservation.transfer.CreateReservationRequest;
+import com.moti.backend.core.reservation.transfer.CreateReservationResponse;
 import com.moti.backend.global.exception.BusinessException;
 import com.moti.backend.global.type.StatusCode;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class ReservationService {
     private final ReservationCreator reservationCreator;
 
     @Transactional
-    public void reserve(CreateReservationRequest dto) {
+    public CreateReservationResponse reserve(CreateReservationRequest dto) {
         List<Long> showSeatIds = Arrays.asList(dto.getShowSeatMappingIds());
         List<ShowSeatMapping> showSeats;
 
@@ -70,6 +71,8 @@ public class ReservationService {
             // order 레코드 생성
             Order order = Order.create(orderToken, member, totalAmount);
             orderRepository.save(order);
+
+            return new CreateReservationResponse(orderToken, totalAmount, showSeatIds);
 
         } catch (Exception e) {
             // 예외 발생 시 보상 로직 실행
