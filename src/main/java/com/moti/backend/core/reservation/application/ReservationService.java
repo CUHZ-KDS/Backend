@@ -40,12 +40,15 @@ public class ReservationService {
 
     @Transactional
     public CreateReservationResponse reserve(CreateReservationRequest dto) {
-        List<Long> showSeatIds = Arrays.asList(dto.getShowSeatMappingIds());
+        List<Long> sortedShowSeatIds = Arrays.stream(dto.getShowSeatMappingIds())
+                .sorted()
+                .toList();
+
         List<ShowSeatMapping> showSeats;
 
         try {
             // show_seat_mapping hold로 상태 변경
-            showSeats = showSeatLockService.lockAndHoldShowSeats(showSeatIds);
+            showSeats = showSeatLockService.lockAndHoldShowSeats(sortedShowSeatIds);
         } catch (Exception e) {
             throw new SeatHoldFailedException("좌석 확보 실패");
         }
@@ -64,7 +67,7 @@ public class ReservationService {
             String orderToken = OrderTokenGenerator.generateToken();
 
             // 결제할 금액 계산 로직
-            Long totalAmount = showSeatMappingRepository.findPricesByShowSeatIds(showSeatIds)
+            Long totalAmount = showSeatMappingRepository.findPricesByShowSeatIds(sortedShowSeatIds)
                     .stream()
                     .reduce(0L, Long::sum);
 
@@ -72,12 +75,12 @@ public class ReservationService {
             Order order = Order.create(orderToken, member, totalAmount);
             orderRepository.save(order);
 
-            return new CreateReservationResponse(orderToken, totalAmount, showSeatIds);
+            return new CreateReservationResponse(orderToken, totalAmount, sortedShowSeatIds);
 
         } catch (Exception e) {
             // 예외 발생 시 보상 로직 실행
             // 새롭게 생성된 트랜잭션의 결과인 좌석 상태 복구
-            showSeatCompensationService.releaseShowSeats(showSeatIds);
+            showSeatCompensationService.releaseShowSeats(sortedShowSeatIds);
             throw e;
         }
     }

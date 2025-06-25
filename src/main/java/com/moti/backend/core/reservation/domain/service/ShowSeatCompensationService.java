@@ -15,8 +15,8 @@ public class ShowSeatCompensationService {
     private final ShowSeatMappingRepository showSeatMappingRepository;
 
     @Transactional
-    public void releaseShowSeats(List<Long> showSeatIds) {
-        List<ShowSeatMapping> showSeats = showSeatMappingRepository.findAllByIdWithPessimisticLock(showSeatIds);
+    public void releaseShowSeats(List<Long> sortedShowSeatIds) {
+        List<ShowSeatMapping> showSeats = showSeatMappingRepository.findAllByIdWithPessimisticLock(sortedShowSeatIds);
 
         for (ShowSeatMapping showSeat : showSeats) {
             showSeat.release(); // HOLD 에서 AVAILABLE 로 변경

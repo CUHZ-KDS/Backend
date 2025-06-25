@@ -19,9 +19,7 @@ public class ShowSeatLockService {
     private final ShowSeatMappingRepository showSeatMappingRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public List<ShowSeatMapping> lockAndHoldShowSeats(List<Long> showSeatIds) {
-        List<Long> sortedShowSeatIds = showSeatIds.stream().sorted().toList();
-
+    public List<ShowSeatMapping> lockAndHoldShowSeats(List<Long> sortedShowSeatIds) {
         List<ShowSeatMapping> showSeats = showSeatMappingRepository.findAllByIdWithPessimisticLock(sortedShowSeatIds);
 
         if (showSeats.size() != sortedShowSeatIds.size()) {
