@@ -33,6 +33,7 @@ public class ReservationService {
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
 
+    private final ReservationPolicyService reservationPolicyService;
     private final ShowSeatLockService showSeatLockService;
     private final ShowSeatCompensationService showSeatCompensationService;
     private final ReservationCreator reservationCreator;
@@ -42,6 +43,8 @@ public class ReservationService {
         List<Long> sortedShowSeatIds = Arrays.stream(dto.getShowSeatMappingIds())
                 .sorted()
                 .toList();
+
+        reservationPolicyService.validateSeatCount(sortedShowSeatIds.size());
 
         List<ShowSeatMapping> showSeats;
 
