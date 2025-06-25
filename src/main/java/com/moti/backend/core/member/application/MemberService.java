@@ -7,7 +7,6 @@ import com.moti.backend.core.member.domain.entity.Member;
 import com.moti.backend.core.member.domain.type.SocialType;
 import com.moti.backend.core.member.infrastructure.persistence.MemberRepository;
 import com.moti.backend.core.member.transfer.dto.MemberResponse;
-import com.moti.backend.global.security.SecurityUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +19,12 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 
-	public MemberResponse getCurrentMemberInfo() {
-		Member currentMember = SecurityUtils.getCurrentMember();
-
+	public MemberResponse getCurrentMemberInfo(Member member) {
 		// Guest와 일반 사용자 구분하여 응답
-		if (currentMember.getSocialType() == SocialType.GUEST) {
-			return MemberResponse.fromGuest(currentMember);
+		if (member.getSocialType() == SocialType.GUEST) {
+			return MemberResponse.fromGuest(member);
 		} else {
-			return MemberResponse.from(currentMember);
+			return MemberResponse.from(member);
 		}
 	}
 }

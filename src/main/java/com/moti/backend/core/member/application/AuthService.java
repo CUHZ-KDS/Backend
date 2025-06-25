@@ -10,7 +10,6 @@ import com.moti.backend.core.member.transfer.dto.LoginResponse;
 import com.moti.backend.core.member.transfer.dto.MemberResponse;
 import com.moti.backend.core.member.transfer.dto.RefreshTokenResponse;
 import com.moti.backend.global.security.JwtTokenProvider;
-import com.moti.backend.global.security.SecurityUtils;
 import com.moti.backend.global.security.TokenStorageService;
 import com.moti.backend.global.validation.RefreshTokenValidator;
 
@@ -66,9 +65,8 @@ public class AuthService {
 			.build();
 	}
 
-	public void logout() {
-		Member currentMember = SecurityUtils.getCurrentMember();
-		tokenStorageService.removeTokens(currentMember.getId());
-		log.info("사용자가 성공적으로 로그아웃되었습니다. 회원 ID: {}", currentMember.getId());
+	public void logout(Member member) {
+		tokenStorageService.removeTokens(member.getId());
+		log.info("사용자가 성공적으로 로그아웃되었습니다. 회원 ID: {}", member.getId());
 	}
 }

@@ -1,7 +1,6 @@
 package com.moti.backend.global.security;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -89,7 +88,7 @@ public class JwtTokenProvider {
 			Claims claims = parseClaims(token);
 			return !claims.getExpiration().before(new Date());
 		} catch (JwtException | IllegalArgumentException e) {
-			log.warn("Invalid JWT token: {}", e.getMessage());
+			log.warn("유효하지 않은 JWT 토큰입니다: {}", e.getMessage());
 			return false;
 		}
 	}

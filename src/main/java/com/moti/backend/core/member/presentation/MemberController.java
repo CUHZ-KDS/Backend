@@ -1,11 +1,13 @@
 package com.moti.backend.core.member.presentation;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moti.backend.core.member.application.MemberService;
+import com.moti.backend.core.member.domain.entity.Member;
 import com.moti.backend.core.member.transfer.dto.MemberResponse;
 import com.moti.backend.global.dto.response.ApiResponse;
 
@@ -21,8 +23,9 @@ public class MemberController {
 	private final MemberService memberService;
 
 	@GetMapping("/me")
-	public ResponseEntity<ApiResponse<MemberResponse>> getMyInfo() {
-		MemberResponse memberResponse = memberService.getCurrentMemberInfo();
+	public ResponseEntity<ApiResponse<MemberResponse>> getMyInfo(Authentication authentication) {
+		Member member = (Member)authentication.getPrincipal();
+		MemberResponse memberResponse = memberService.getCurrentMemberInfo(member);
 		return ResponseEntity.ok(ApiResponse.success(memberResponse));
 	}
 }
