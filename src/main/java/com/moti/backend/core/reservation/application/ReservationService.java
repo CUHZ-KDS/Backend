@@ -14,8 +14,7 @@ import com.moti.backend.core.reservation.infrastructure.ReservationRepository;
 import com.moti.backend.core.reservation.infrastructure.ShowSeatMappingRepository;
 import com.moti.backend.core.reservation.transfer.CreateReservationRequest;
 import com.moti.backend.core.reservation.transfer.CreateReservationResponse;
-import com.moti.backend.global.exception.BusinessException;
-import com.moti.backend.global.type.StatusCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
