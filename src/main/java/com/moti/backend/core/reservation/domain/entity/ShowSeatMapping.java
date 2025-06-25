@@ -5,7 +5,9 @@ import com.moti.backend.core.reservation.domain.type.SeatStatus;
 import com.moti.backend.core.reservation.exception.InvalidReserveStateException;
 import com.moti.backend.core.reservation.exception.InvalidHoldStateException;
 import com.moti.backend.core.show.domain.entity.Grade;
+import com.moti.backend.core.show.domain.entity.ShowSchedule;
 import com.moti.backend.global.entity.BaseTimeEntity;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,8 +25,9 @@ public class ShowSeatMapping extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "show_schedule_id", nullable = false)
-    private Long showScheduleId;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "show_schedule_id", nullable = false)
+    private ShowSchedule showSchedule;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "seat_id", nullable = false)

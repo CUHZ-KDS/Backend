@@ -40,8 +40,9 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<ApiResponse<Void>> logout() {
-		authService.logout();
+	public ResponseEntity<ApiResponse<Void>> logout(Authentication authentication) {
+		Member member = (Member)authentication.getPrincipal();
+		authService.logout(member);
 		return ResponseEntity.ok(ApiResponse.success(null, "로그아웃이 완료되었습니다."));
 	}
 }
