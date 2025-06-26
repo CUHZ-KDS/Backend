@@ -1,4 +1,4 @@
-package com.moti.backend.core.reservation.infrastructure;
+package com.moti.backend.core.reservation.infrastructure.persistence;
 
 import com.moti.backend.core.reservation.domain.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
