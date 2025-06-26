@@ -10,8 +10,8 @@ import com.moti.backend.core.reservation.domain.entity.ShowSeatMapping;
 import com.moti.backend.core.reservation.domain.helper.OrderTokenGenerator;
 import com.moti.backend.core.reservation.domain.service.*;
 import com.moti.backend.core.reservation.exception.SeatHoldFailedException;
-import com.moti.backend.core.reservation.infrastructure.ReservationRepository;
-import com.moti.backend.core.reservation.infrastructure.ShowSeatMappingRepository;
+import com.moti.backend.core.reservation.infrastructure.persistence.ReservationRepository;
+import com.moti.backend.core.reservation.infrastructure.persistence.ShowSeatMappingRepository;
 import com.moti.backend.core.reservation.transfer.CreateReservationRequest;
 import com.moti.backend.core.reservation.transfer.CreateReservationResponse;
 

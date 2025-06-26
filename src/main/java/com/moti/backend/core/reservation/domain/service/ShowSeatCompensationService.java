@@ -1,7 +1,7 @@
 package com.moti.backend.core.reservation.domain.service;
 
 import com.moti.backend.core.reservation.domain.entity.ShowSeatMapping;
-import com.moti.backend.core.reservation.infrastructure.ShowSeatMappingRepository;
+import com.moti.backend.core.reservation.infrastructure.persistence.ShowSeatMappingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
