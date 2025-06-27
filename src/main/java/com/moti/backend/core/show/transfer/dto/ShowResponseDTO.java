@@ -61,9 +61,10 @@ public class ShowResponseDTO {
 		private Integer runningTimeMinute;
 		private Integer intermissionTime;
 		private String showImgUrl;
+		private LocalDateTime serverTime;
 		private List<GradeInfo> grade;
 
-		public static DetailInfo from(Show show, List<Grade> grades) {
+		public static DetailInfo from(Show show, List<Grade> grades, LocalDateTime serverTime) {
 			return DetailInfo.builder()
 				.id(show.getId())
 				.title(show.getTitle())
@@ -76,6 +77,7 @@ public class ShowResponseDTO {
 				.runningTimeMinute(show.getRunningTimeMinute())
 				.intermissionTime(show.getIntermissionTime())
 				.showImgUrl(show.getShowImgUrl())
+				.serverTime(serverTime)
 				.grade(grades.stream()
 					.map(GradeInfo::from)
 					.toList())
