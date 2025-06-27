@@ -1,5 +1,6 @@
 package com.moti.backend.core.show.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class ShowService {
 	public ShowResponseDTO.DetailInfo getShowDetail(Long showId) {
 		Show show = showDomainService.findShowById(showId);
 		List<Grade> grades = gradeDomainService.findGradesByShowId(showId);
-		return ShowResponseDTO.DetailInfo.from(show, grades);
+		LocalDateTime serverTime = LocalDateTime.now();
+		return ShowResponseDTO.DetailInfo.from(show, grades, serverTime);
 	}
 }
