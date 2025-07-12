@@ -6,9 +6,17 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.moti.backend.global.security.WebSocketAuthInterceptor;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+	private final WebSocketAuthInterceptor webSocketAuthInterceptor;
+
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
 		config.enableSimpleBroker("/topic");
@@ -22,6 +30,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	// @Override
 	// public void configureClientInboundChannel(ChannelRegistration registration) {
-	// 	registration.interceptors(new AuthChannelInterceptor());
+	// 	registration.interceptors(webSocketAuthInterceptor);
 	// }
 }
