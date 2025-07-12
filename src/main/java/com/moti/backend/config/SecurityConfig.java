@@ -32,6 +32,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/v1/auth/oauth-login/**").permitAll()
 				.requestMatchers("/api/v1/reservations/**").permitAll()
 				.requestMatchers("/api/v1/shows/**").permitAll()
+				.requestMatchers("/ws/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.exceptionHandling(exceptions -> exceptions

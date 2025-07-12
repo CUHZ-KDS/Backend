@@ -1,4 +1,4 @@
-package com.moti.backend.core.show.transfer.dto;
+package com.moti.backend.core.show.presentation.rest.dto;
 
 import java.util.List;
 
@@ -21,7 +21,9 @@ public class SeatResponseDTO {
 		private String showTitle;
 		private List<SeatInfo> seats;
 		private List<ZoneInfo> zones;
-		public static ShowSeatsInfo of(Show show, ShowSchedule showSchedule, List<SeatInfo> seats, List<ZoneInfo> zones) {
+
+		public static ShowSeatsInfo of(Show show, ShowSchedule showSchedule, List<SeatInfo> seats,
+			List<ZoneInfo> zones) {
 			return ShowSeatsInfo.builder()
 				.placeId(show.getPlace().getId())
 				.showId(show.getId())
@@ -44,6 +46,7 @@ public class SeatResponseDTO {
 		private Boolean isVisible;
 		private String status;
 		private Integer price;
+
 		public static SeatInfo from(ShowSeatMapping mapping) {
 			return SeatInfo.builder()
 				.zoneId(mapping.getSeat().getZone().getId())
@@ -63,6 +66,7 @@ public class SeatResponseDTO {
 	public static class ZoneInfo {
 		private Long zoneId;
 		private String zoneName;
+
 		public static ZoneInfo from(Zone zone) {
 			return ZoneInfo.builder()
 				.zoneId(zone.getId())

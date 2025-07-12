@@ -9,7 +9,7 @@ import com.moti.backend.core.show.domain.entity.Grade;
 import com.moti.backend.core.show.domain.entity.Show;
 import com.moti.backend.core.show.domain.service.GradeDomainService;
 import com.moti.backend.core.show.domain.service.ShowDomainService;
-import com.moti.backend.core.show.transfer.dto.ShowResponseDTO;
+import com.moti.backend.core.show.presentation.rest.dto.ShowResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 

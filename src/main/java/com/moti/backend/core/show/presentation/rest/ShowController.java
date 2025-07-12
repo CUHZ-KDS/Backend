@@ -1,4 +1,4 @@
-package com.moti.backend.core.show.presentation;
+package com.moti.backend.core.show.presentation.rest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moti.backend.core.show.application.ShowService;
-import com.moti.backend.core.show.transfer.dto.ShowResponseDTO;
+import com.moti.backend.core.show.presentation.rest.dto.ShowResponseDTO;
 import com.moti.backend.global.dto.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;

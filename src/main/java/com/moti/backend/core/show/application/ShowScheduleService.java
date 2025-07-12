@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.moti.backend.core.show.domain.entity.ShowSchedule;
 import com.moti.backend.core.show.domain.service.ShowDomainService;
 import com.moti.backend.core.show.domain.service.ShowScheduleDomainService;
-import com.moti.backend.core.show.transfer.dto.ShowScheduleResponseDTO;
+import com.moti.backend.core.show.presentation.rest.dto.ShowScheduleResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 

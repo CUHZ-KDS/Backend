@@ -1,4 +1,4 @@
-package com.moti.backend.core.show.transfer.dto;
+package com.moti.backend.core.show.presentation.rest.dto;
 
 import java.time.LocalDate;
 import java.util.List;
