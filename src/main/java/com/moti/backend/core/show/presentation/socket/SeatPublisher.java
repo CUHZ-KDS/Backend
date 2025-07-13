@@ -18,7 +18,7 @@ public class SeatPublisher {
 	public void pubMessageByScheduleId(Long showScheduleId, Long[] seatIds) {
 
 		SeatReservationResponse response = SeatReservationResponse.from(
-			EventType.SEAT_DESELECTED,// redis를 해당 좌석이 선택중인지 아닌지 확인 필요
+			EventType.SEAT_DISABLED,// redis를 해당 좌석이 선택중인지 아닌지 확인 필요
 			showScheduleId,
 			seatIds,
 			TTL_SECONDS,
