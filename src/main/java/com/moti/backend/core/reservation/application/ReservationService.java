@@ -14,6 +14,7 @@ import com.moti.backend.core.reservation.infrastructure.persistence.ReservationR
 import com.moti.backend.core.reservation.infrastructure.persistence.ShowSeatMappingRepository;
 import com.moti.backend.core.reservation.transfer.CreateReservationRequest;
 import com.moti.backend.core.reservation.transfer.CreateReservationResponse;
+import com.moti.backend.core.show.application.SeatStatusService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class ReservationService {
     private final ShowSeatLockService showSeatLockService;
     private final ShowSeatCompensationService showSeatCompensationService;
     private final ReservationCreator reservationCreator;
+    private final SeatStatusService seatStatusService;
 
     @Transactional
     public CreateReservationResponse reserve(CreateReservationRequest dto) {
@@ -49,13 +51,16 @@ public class ReservationService {
         List<ShowSeatMapping> showSeats;
 
         try {
-            // show_seat_mapping hold로 상태 변경
             showSeats = showSeatLockService.lockAndHoldShowSeats(sortedShowSeatIds);
-        } catch (Exception e) {
-            throw new SeatHoldFailedException("좌석 확보 실패");
-        }
+            Long scheduleId = showSeats.get(0).getShowSchedule().getId();
+            Long[] seatIds = showSeats.stream()
+                .map(showSeat -> showSeat.getSeat().getId())
+                .toArray(Long[]::new);
 
-        try {
+            // redis 상태 disabled로 변경 -> seatstatusservice.reserved()
+            // message도 broadcasting
+            seatStatusService.reserved(scheduleId, seatIds);
+
             Member member = memberRepository.findById(1L)
                     .orElseThrow(() -> new MemberNotFoundException("예매 시도자를 시스템에서 찾을 수 없습니다."));
 
@@ -79,6 +84,8 @@ public class ReservationService {
 
             return new CreateReservationResponse(orderToken, totalAmount, sortedShowSeatIds);
 
+        } catch (SeatHoldFailedException e) {
+            throw new SeatHoldFailedException("좌석 확보 실패");
         } catch (Exception e) {
             // 예외 발생 시 보상 로직 실행
             // 새롭게 생성된 트랜잭션의 결과인 좌석 상태 복구

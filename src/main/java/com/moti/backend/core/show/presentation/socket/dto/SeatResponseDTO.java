@@ -40,15 +40,18 @@ public class SeatResponseDTO {
 		private EventType eventType;
 		private Long showScheduleId;
 		private Long[] seatIds;
-		private int ttlSeconds;
-		private String timestamp;
+		private SeatStatus seatStatus;
+		private long ttlSeconds;
+		private LocalDateTime timestamp;
+
 
 		public static SeatReservationResponse from(EventType eventType, Long showScheduleId, Long[] seatIds,
-			int ttlSeconds, String timestamp) {
+			long ttlSeconds, LocalDateTime timestamp) {
 			return SeatReservationResponse.builder()
 				.eventType(eventType)
 				.showScheduleId(showScheduleId)
 				.seatIds(seatIds)
+				.seatStatus(SeatStatus.DISABLED)
 				.ttlSeconds(ttlSeconds)
 				.timestamp(timestamp)
 				.build();
@@ -61,10 +64,10 @@ public class SeatResponseDTO {
 		private EventType eventType;
 		private Long showScheduleId;
 		private List<SeatInfo> seatIds;
-		private String timestamp;
+		private LocalDateTime timestamp;
 
 		public static InitialSeatResponse from(EventType eventType, Long showScheduleId, List<SeatInfo> seatInfoList,
-			String timestamp) {
+			LocalDateTime timestamp) {
 			return InitialSeatResponse.builder()
 				.eventType(eventType)
 				.showScheduleId(showScheduleId)
