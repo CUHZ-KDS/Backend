@@ -53,6 +53,9 @@ public class SeatGateway {
 			request.getSeatId()
 			// getMemberIdFromPrincipal(principal)
 		);
+
+		String destination = "/topic/show-schedule/" + request.getShowScheduleId() + "/seats";
+		messagingTemplate.convertAndSend(destination, response);
 	}
 
 	//todo: GateWay에서 시큐리티 컨텍스트에서 직접 접근하여 member 정보를 가져오는게 적합한지 확인 필요
