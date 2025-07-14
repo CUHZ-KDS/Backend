@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SeatGateway {
 
-	private final SeatStatusService showSocketService;
+	private final SeatStatusService showStatusService;
 	private final SimpMessagingTemplate messagingTemplate;
 
 	@MessageMapping("/seat/select")
@@ -36,7 +36,7 @@ public class SeatGateway {
 		// );
 		log.info("selectSeat request: {}", request);
 
-		SeatToggleResponse response = showSocketService.selected(
+		SeatToggleResponse response = showStatusService.selected(
 			request.getShowScheduleId(),
 			request.getSeatId()
 		);
@@ -45,32 +45,18 @@ public class SeatGateway {
 		messagingTemplate.convertAndSend(destination, response);
 	}
 
-	// @MessageMapping("/seat/deselect")
-	// public void deselectSeat(SeatToggleRequest request, Principal principal) {
-	//
-	// 	SeatToggleResponse response = showSocketService.disSelected(
-	// 		request.getShowScheduleId(),
-	// 		request.getSeatId(),
-	// 		getMemberIdFromPrincipal(principal)
-	// 	);
-	//
-	// 	String destination = "/topic/show-schedule/" + request.getShowScheduleId() + "/seats";
-	// 	messagingTemplate.convertAndSend(destination, response);
-	// }
+	@MessageMapping("/seat/deselect")
+	public void deselectSeat(SeatToggleRequest request) {
+		// , Principal principal
+		SeatToggleResponse response = showStatusService.deselected(
+			request.getShowScheduleId(),
+			request.getSeatId()
+			// getMemberIdFromPrincipal(principal)
+		);
 
-	// @MessageMapping("/seat/reserve")
-	// public SeatReservationResponse reserveSeat(
-	// 	// 3. @MessageMapping 경로의 {showId} 변수를 파라미터로 가져옵니다.
-	// 	@DestinationVariable String show_schedule_id,
-	// 	// 4. 클라이언트가 보낸 JSON 데이터를 자바 객체로 변환하여 받습니다.
-	// 	SeatReservationRequest request) {
-	//
-	// 	// 5. 서비스 계층을 호출하여 비즈니스 로직을 수행합니다.
-	// 	SeatReservationResponse changedStatus = showSocketService.reserved(show_schedule_id, request.getSeatId());
-	//
-	// 	// 6. 반환된 객체가 @SendTo에 지정된 토픽으로 전송됩니다.
-	// 	return changedStatus;
-	// }
+		String destination = "/topic/show-schedule/" + request.getShowScheduleId() + "/seats";
+		messagingTemplate.convertAndSend(destination, response);
+	}
 
 	//todo: GateWay에서 시큐리티 컨텍스트에서 직접 접근하여 member 정보를 가져오는게 적합한지 확인 필요
 	private Long getMemberIdFromPrincipal(Principal principal) {
