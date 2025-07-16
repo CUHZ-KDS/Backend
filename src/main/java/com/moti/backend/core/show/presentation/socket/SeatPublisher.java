@@ -1,11 +1,13 @@
 package com.moti.backend.core.show.presentation.socket;
 
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
-
 import static com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.*;
 
 import java.time.LocalDateTime;
+
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
+
+import com.moti.backend.core.show.domain.type.EventType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +24,7 @@ public class SeatPublisher {
 			showScheduleId,
 			seatIds,
 			TTL_SECONDS,
- 			LocalDateTime.now()
+			LocalDateTime.now()
 		);
 
 		String destination = "/topic/show-schedule/" + showScheduleId + "/seats";

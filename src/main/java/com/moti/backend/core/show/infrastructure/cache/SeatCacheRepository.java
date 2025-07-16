@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Repository;
 
-import com.moti.backend.core.show.presentation.socket.SeatStatus;
+import com.moti.backend.core.show.domain.type.SeatStatus;
 
 import lombok.RequiredArgsConstructor;
 
