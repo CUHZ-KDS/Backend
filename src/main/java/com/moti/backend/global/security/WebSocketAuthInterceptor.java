@@ -1,7 +1,5 @@
 package com.moti.backend.global.security;
 
-import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.messaging.Message;
@@ -9,7 +7,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import com.moti.backend.core.member.domain.entity.Member;
@@ -37,21 +34,16 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 			return authenticateUser(accessor, message);
 		}
 
-		// CONNECT 이후 모든 메시지에서 인증 상태 확인
-		if (requiresAuthentication(accessor.getCommand())) {
-			return validateAuthenticatedUser(accessor, message);
-		}
-
 		return message;
 	}
 
 	private Message<?> authenticateUser(StompHeaderAccessor accessor, Message<?> message) {
 		try {
-			// Authorization 헤더에서 JWT 토큰 추출
 			String token = extractTokenFromHeader(accessor);
+			log.info("WebSocket CONNECT 요청 - 세션: {}", accessor.getSessionId());
 
-			// JWT 토큰 검증
 			if (!jwtTokenProvider.validateToken(token)) {
+				log.warn("유효하지 않은 토큰으로 CONNECT 시도 - 세션: {}", accessor.getSessionId());
 				throw new JwtAuthenticationException("유효하지 않은 토큰입니다.");
 			}
 
@@ -59,42 +51,13 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 			Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new MemberNotFoundException("사용자를 찾을 수 없습니다."));
 
-			// STOMP 세션에 사용자 정보 설정
-			UsernamePasswordAuthenticationToken authentication =
-				new UsernamePasswordAuthenticationToken(member, null, Collections.emptyList());
-
-			accessor.setUser(authentication);
-
+			// WebSocket 세션에 저장
+			accessor.getSessionAttributes().put("user", member);
 			return message;
-
 		} catch (Exception e) {
-			// 인증 실패 시 null 반환 (연결 차단)
+			log.error("WebSocket 인증 실패 - 세션: {}, 오류: {}", accessor.getSessionId(), e.getMessage());
 			return null;
 		}
-	}
-
-	private Message<?> validateAuthenticatedUser(StompHeaderAccessor accessor, Message<?> message) {
-		Principal user = accessor.getUser();
-
-		if (user == null) {
-			log.warn("인증되지 않은 사용자의 메시지 시도 - command: {}", accessor.getCommand());
-			return null; // 메시지 차단
-		}
-
-		// 추가 검증 로직 (필요시)
-		String memberId = (String)accessor.getSessionAttributes().get("memberId");
-		if (memberId == null) {
-			log.warn("세션에 memberId가 없음");
-			return null;
-		}
-
-		return message;
-	}
-
-	private boolean requiresAuthentication(StompCommand command) {
-		return command == StompCommand.SUBSCRIBE ||
-			command == StompCommand.SEND ||
-			command == StompCommand.MESSAGE;
 	}
 
 	private String extractTokenFromHeader(StompHeaderAccessor accessor) {
