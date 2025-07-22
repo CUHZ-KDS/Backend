@@ -29,7 +29,8 @@ public class SeatGateway {
 
 		SeatToggleResponse response = showStatusService.selected(
 			request.getShowScheduleId(),
-			request.getSeatId()
+			request.getSeatId(),
+			memberId
 		);
 
 		String destination = "/topic/show-schedule/" + request.getShowScheduleId() + "/seats";
@@ -42,7 +43,8 @@ public class SeatGateway {
 
 		SeatToggleResponse response = showStatusService.deselected(
 			request.getShowScheduleId(),
-			request.getSeatId()
+			request.getSeatId(),
+			memberId
 		);
 
 		String destination = "/topic/show-schedule/" + request.getShowScheduleId() + "/seats";

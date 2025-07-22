@@ -18,11 +18,11 @@ public class SeatResponseDTO {
 		private final Long showScheduleId;
 		private final Long seatId;
 		private final SeatStatus currentStatus;
-		private final int selectedCount;
+		private final Long selectedCount;
 		private final LocalDateTime timestamp;
 
 		public static SeatToggleResponse from(EventType eventType, Long showScheduleId, Long seatId,
-			SeatStatus currentStatus, int selectedCount, LocalDateTime timestamp) {
+			SeatStatus currentStatus, Long selectedCount, LocalDateTime timestamp) {
 			return SeatToggleResponse.builder()
 				.eventType(eventType)
 				.showScheduleId(showScheduleId)

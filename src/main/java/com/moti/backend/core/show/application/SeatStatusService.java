@@ -21,29 +21,28 @@ public class SeatStatusService {
 	private final SeatCacheRepository seatCacheRepository;
 	private final SeatPublisher seatPublisher;
 
-	public SeatToggleResponse selected(Long showScheduleId, Long seatId) {
-		// memberId를 사용하여 좌석을 선택한 사용자를 추적해야합니다.
-		seatCacheRepository.select(showScheduleId, seatId);
+	public SeatToggleResponse selected(Long showScheduleId, Long seatId, Long memberId) {
+		Long selectedCount = seatCacheRepository.select(showScheduleId, seatId, memberId);
 
 		return SeatToggleResponse.from(
 			EventType.SEAT_SELECTED,
 			showScheduleId,
 			seatId,
 			SeatStatus.SELECTED,
-			1,  // redis를 통해 조회한 선택된 좌석의 개수 추가 필요
+			selectedCount,
 			LocalDateTime.now()
 		);
 	}
 
-	public SeatToggleResponse deselected(Long showScheduleId, Long seatId) {
-		seatCacheRepository.deselected(showScheduleId, seatId);
+	public SeatToggleResponse deselected(Long showScheduleId, Long seatId, Long memberId) {
+		Long selectedCount = seatCacheRepository.deselected(showScheduleId, seatId, memberId);
 
 		return SeatToggleResponse.from(
-			EventType.SEAT_DESELECTED,// redis를 해당 좌석이 선택중인지 아닌지 확인 필요
+			EventType.SEAT_DESELECTED,
 			showScheduleId,
 			seatId,
 			SeatStatus.AVAILABLE,
-			0,  // redis를 통해 조회한 선택된 좌석의 개수 추가 필요
+			selectedCount,
 			LocalDateTime.now()
 		);
 	}
