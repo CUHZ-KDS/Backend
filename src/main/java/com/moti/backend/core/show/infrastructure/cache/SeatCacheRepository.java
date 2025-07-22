@@ -1,7 +1,10 @@
 package com.moti.backend.core.show.infrastructure.cache;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,12 +24,14 @@ public class SeatCacheRepository {
 	private final HashOperations<String, String, String> hashOps;
 	// Redis의 Set 자료구조를 다루기 위한 인터페이스
 	private final SetOperations<String, String> setOps;
+	private final RedissonClient redissonClient;
 
 	@Autowired
-	public SeatCacheRepository(RedisTemplate<String, String> redisTemplate) {
+	public SeatCacheRepository(RedisTemplate<String, String> redisTemplate, RedissonClient redissonClient) {
 		this.redisTemplate = redisTemplate;
 		this.hashOps = redisTemplate.opsForHash();
 		this.setOps = redisTemplate.opsForSet();
+		this.redissonClient = redissonClient;
 	}
 
 	private static final String SEAT_SELECT_MEMBER_KEY = "seat:%d:select-member";
@@ -35,11 +40,22 @@ public class SeatCacheRepository {
 
 	// atomic
 	public Long select(Long showScheduleId, Long seatId, Long memberId) {
-		String statusKey = String.format(SEAT_STATUS_KEY, showScheduleId);
-		String seatIdStr = String.valueOf(seatId);
+		String lockKey = String.format("lock:seat:%d:%d", showScheduleId, seatId);  // 좌석 단위로 락
+		RLock lock = redissonClient.getLock(lockKey);
 
-		hashOps.put(statusKey, seatIdStr, String.valueOf(SeatStatus.SELECTED));
-		return getCountAfterAddMember(showScheduleId, seatId, memberId);
+		try {
+			lock.lock(5, TimeUnit.SECONDS);
+
+			String statusKey = String.format(SEAT_STATUS_KEY, showScheduleId);
+			String seatIdStr = String.valueOf(seatId);
+
+			hashOps.put(statusKey, seatIdStr, String.valueOf(SeatStatus.SELECTED));
+			return getCountAfterAddMember(showScheduleId, seatId, memberId);
+		} finally {
+			if (lock.isHeldByCurrentThread()) {
+				lock.unlock();
+			}
+		}
 	}
 
 	private Long getCountAfterAddMember(Long showScheduleId, Long seatId, Long memberId) {
@@ -53,11 +69,22 @@ public class SeatCacheRepository {
 
 	// atomic
 	public Long deselected(Long showScheduleId, Long seatId, Long memberId) {
-		String statusKey = String.format(SEAT_STATUS_KEY, showScheduleId);
-		String seatIdStr = String.valueOf(seatId);
+		String lockKey = String.format("lock:seat:%d:%d", showScheduleId, seatId);  // 좌석 단위로 락
+		RLock lock = redissonClient.getLock(lockKey);
 
-		hashOps.put(statusKey, seatIdStr, String.valueOf(SeatStatus.AVAILABLE));
-		return getCountAfterRemoveMember(showScheduleId, seatId, memberId);
+		try {
+			lock.lock(5, TimeUnit.SECONDS);
+
+			String statusKey = String.format(SEAT_STATUS_KEY, showScheduleId);
+			String seatIdStr = String.valueOf(seatId);
+
+			hashOps.put(statusKey, seatIdStr, String.valueOf(SeatStatus.AVAILABLE));
+			return getCountAfterRemoveMember(showScheduleId, seatId, memberId);
+		} finally {
+			if (lock.isHeldByCurrentThread()) {
+				lock.unlock();
+			}
+		}
 	}
 
 	private Long getCountAfterRemoveMember(Long showScheduleId, Long seatId, Long memberId) {
