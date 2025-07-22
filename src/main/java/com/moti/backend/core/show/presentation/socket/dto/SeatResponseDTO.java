@@ -3,8 +3,8 @@ package com.moti.backend.core.show.presentation.socket.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.moti.backend.core.show.presentation.socket.EventType;
-import com.moti.backend.core.show.presentation.socket.SeatStatus;
+import com.moti.backend.core.show.domain.type.EventType;
+import com.moti.backend.core.show.domain.type.SeatStatus;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -43,7 +43,6 @@ public class SeatResponseDTO {
 		private SeatStatus seatStatus;
 		private long ttlSeconds;
 		private LocalDateTime timestamp;
-
 
 		public static SeatReservationResponse from(EventType eventType, Long showScheduleId, Long[] seatIds,
 			long ttlSeconds, LocalDateTime timestamp) {

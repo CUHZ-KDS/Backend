@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import com.moti.backend.core.place.infrastructure.persistence.SeatRepository;
+import com.moti.backend.core.show.domain.type.EventType;
+import com.moti.backend.core.show.domain.type.SeatStatus;
 import com.moti.backend.core.show.infrastructure.cache.SeatCacheRepository;
-import com.moti.backend.core.show.presentation.socket.EventType;
 import com.moti.backend.core.show.presentation.socket.SeatPublisher;
-import com.moti.backend.core.show.presentation.socket.SeatStatus;
 import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.SeatToggleResponse;
 
 import lombok.RequiredArgsConstructor;

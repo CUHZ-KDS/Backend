@@ -1,4 +1,4 @@
-package com.moti.backend.core.show.presentation.socket;
+package com.moti.backend.core.show.domain.type;
 
 public enum EventType {
 	INITIAL_SEAT_STATUS,
