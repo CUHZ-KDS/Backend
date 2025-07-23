@@ -81,12 +81,23 @@ public class SeatResponseDTO {
 	public static class SeatInfo {
 		private Long seatId;
 		private String status;
+		private Long selectedCount;
 
-		public static SeatInfo from(Long seatId, String status) {
+		public static SeatInfo from(Long seatId, String status, Long selectedCount) {
 			return SeatInfo.builder()
 				.seatId(seatId)
 				.status(status)
+				.selectedCount(selectedCount)
 				.build();
 		}
+	}
+
+	@Getter
+	@Builder
+	public static class InitialSeatStatusResponse {
+		private EventType eventType;
+		private Long showScheduleId;
+		private List<SeatInfo> seats;
+		private LocalDateTime timestamp;
 	}
 }

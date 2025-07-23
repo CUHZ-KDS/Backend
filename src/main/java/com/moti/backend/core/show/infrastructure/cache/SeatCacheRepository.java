@@ -1,6 +1,9 @@
 package com.moti.backend.core.show.infrastructure.cache;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
@@ -12,6 +15,7 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Repository;
 
 import com.moti.backend.core.show.domain.type.SeatStatus;
+import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.SeatInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -78,8 +82,11 @@ public class SeatCacheRepository {
 			String statusKey = String.format(SEAT_STATUS_KEY, showScheduleId);
 			String seatIdStr = String.valueOf(seatId);
 
-			hashOps.put(statusKey, seatIdStr, String.valueOf(SeatStatus.AVAILABLE));
-			return getCountAfterRemoveMember(showScheduleId, seatId, memberId);
+			Long count = getCountAfterRemoveMember(showScheduleId, seatId, memberId);
+			if (count <= 0) {
+				hashOps.put(statusKey, seatIdStr, String.valueOf(SeatStatus.AVAILABLE));
+			}
+			return count;
 		} finally {
 			if (lock.isHeldByCurrentThread()) {
 				lock.unlock();
@@ -107,5 +114,39 @@ public class SeatCacheRepository {
 			String holdKey = String.format(HOLD_SEAT_KEY, showScheduleId, seatId);
 			redisTemplate.opsForValue().set(holdKey, "HELD", Duration.ofMinutes(10));
 		}
+	}
+
+	// 공연 스케줄 생성 시, 호출
+	public void initSeatsForShowSchedule(Long showScheduleId, Long[] seatIds) {
+		String key = String.format(SEAT_STATUS_KEY, showScheduleId);
+		for (Long seatId : seatIds) {
+			// 모든 좌석을 AVAILABLE 상태로 초기화
+			hashOps.put(key, String.valueOf(seatId), String.valueOf(SeatStatus.AVAILABLE));
+		}
+	}
+
+	// 해당 공연의 UI 상태를 반환하는 로직(상태 + count)
+	public List<SeatInfo> getSeatsStatusForShowSchedule(Long showScheduleId) {
+		String key = String.format(SEAT_STATUS_KEY, showScheduleId);
+		Map<String, String> seatStatusMap = hashOps.entries(key);
+		List<SeatInfo> result = new ArrayList<>();
+
+		// 해당 공연의 모든 좌석 상태를 가져오는 로직
+		for (String seatId : seatStatusMap.keySet()) {
+			String status = seatStatusMap.get(seatId);
+			Long count = 0L;
+			if (status.equals(SeatStatus.SELECTED.toString())) {
+				count = getSeatsCountForShowSchedule(showScheduleId, Long.valueOf(seatId));
+			}
+			result.add(SeatInfo.from(Long.valueOf(seatId), status, count));
+		}
+
+		return result;
+	}
+
+	// 해당 공연의 모든 좌석 선택된 인원 수를 가져오는 로직
+	private Long getSeatsCountForShowSchedule(Long showScheduleId, Long seatId) {
+		String key = String.format(SEAT_SELECT_MEMBER_KEY, showScheduleId, seatId);
+		return setOps.size(key);
 	}
 }

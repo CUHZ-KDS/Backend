@@ -33,7 +33,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 		if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 			return authenticateUser(accessor, message);
 		}
-
 		return message;
 	}
 

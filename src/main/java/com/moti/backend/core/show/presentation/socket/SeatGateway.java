@@ -2,8 +2,10 @@ package com.moti.backend.core.show.presentation.socket;
 
 import static com.moti.backend.core.show.presentation.socket.dto.SeatRequestDTO.*;
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
@@ -22,6 +24,16 @@ public class SeatGateway {
 
 	private final SeatStatusService showStatusService;
 	private final SimpMessagingTemplate messagingTemplate;
+
+	// message -> 구독한 memberId로 보내야하는건데
+	@SubscribeMapping("(app)/show-schedule/{showScheduleId}/seats")
+	public String handleSeatSubscription(@DestinationVariable Long showScheduleId,
+		StompHeaderAccessor accessor) {
+		log.info("Client subscribed to seat status for show schedule: {}", showScheduleId);
+		// showStatusService에서 현재 좌석 현황을 가져오는 메서드를 호출합니다. (새로 만들어야 할 수 있습니다)
+		// 이 메서드의 반환 값은 구독을 요청한 클라이언트에게만 자동으로 전송됩니다.
+		return "P";
+	}
 
 	@MessageMapping("/seat/select")
 	public void selectSeat(SeatToggleRequest request, StompHeaderAccessor accessor) {
