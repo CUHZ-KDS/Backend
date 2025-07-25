@@ -12,6 +12,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import com.moti.backend.core.member.domain.entity.Member;
+import com.moti.backend.core.member.exception.MemberNotFoundException;
 import com.moti.backend.core.show.application.SeatStatusService;
 import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO;
 import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.SeatToggleResponse;
@@ -36,7 +37,7 @@ public class SeatGateway {
 
 		if (member == null) {
 			log.warn("세션에서 사용자 정보를 찾을 수 없음");
-			//throw new UnauthorizedException("인증되지 않은 사용자");
+			throw new MemberNotFoundException("인증되지 않은 사용자입니다. 세션: " + headerAccessor.getSessionId());
 		}
 
 		return seatStatusService.getSeatStatusByShowScheduleId(showScheduleId);
