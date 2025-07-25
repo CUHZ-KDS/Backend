@@ -2,6 +2,8 @@ package com.moti.backend.core.show.presentation.socket;
 
 import static com.moti.backend.core.show.presentation.socket.dto.SeatRequestDTO.*;
 
+import java.util.List;
+
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Controller;
 
 import com.moti.backend.core.member.domain.entity.Member;
 import com.moti.backend.core.show.application.SeatStatusService;
+import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO;
 import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.SeatToggleResponse;
 import com.moti.backend.global.exception.JwtAuthenticationException;
 
@@ -22,24 +25,28 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SeatGateway {
 
-	private final SeatStatusService showStatusService;
+	private final SeatStatusService seatStatusService;
 	private final SimpMessagingTemplate messagingTemplate;
 
-	// message -> 구독한 memberId로 보내야하는건데
-	@SubscribeMapping("(app)/show-schedule/{showScheduleId}/seats")
-	public String handleSeatSubscription(@DestinationVariable Long showScheduleId,
-		StompHeaderAccessor accessor) {
-		log.info("Client subscribed to seat status for show schedule: {}", showScheduleId);
-		// showStatusService에서 현재 좌석 현황을 가져오는 메서드를 호출합니다. (새로 만들어야 할 수 있습니다)
-		// 이 메서드의 반환 값은 구독을 요청한 클라이언트에게만 자동으로 전송됩니다.
-		return "P";
+	@SubscribeMapping("/show-schedule/{showScheduleId}/session-init")
+	public List<SeatResponseDTO.SeatInfo> handleSeatSubscription(@DestinationVariable Long showScheduleId,
+		StompHeaderAccessor headerAccessor) {
+
+		Member member = (Member)headerAccessor.getSessionAttributes().get("user");
+
+		if (member == null) {
+			log.warn("세션에서 사용자 정보를 찾을 수 없음");
+			//throw new UnauthorizedException("인증되지 않은 사용자");
+		}
+
+		return seatStatusService.getSeatStatusByShowScheduleId(showScheduleId);
 	}
 
 	@MessageMapping("/seat/select")
 	public void selectSeat(SeatToggleRequest request, StompHeaderAccessor accessor) {
 		Long memberId = getMemberIdFromStompHeaderAccessor(accessor);
 
-		SeatToggleResponse response = showStatusService.selected(
+		SeatToggleResponse response = seatStatusService.selected(
 			request.getShowScheduleId(),
 			request.getSeatId(),
 			memberId
@@ -53,7 +60,7 @@ public class SeatGateway {
 	public void deselectSeat(SeatToggleRequest request, StompHeaderAccessor accessor) {
 		Long memberId = getMemberIdFromStompHeaderAccessor(accessor);
 
-		SeatToggleResponse response = showStatusService.deselected(
+		SeatToggleResponse response = seatStatusService.deselected(
 			request.getShowScheduleId(),
 			request.getSeatId(),
 			memberId

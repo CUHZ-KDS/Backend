@@ -12,7 +12,6 @@ import com.moti.backend.core.show.domain.type.EventType;
 import com.moti.backend.core.show.domain.type.SeatStatus;
 import com.moti.backend.core.show.infrastructure.cache.SeatCacheRepository;
 import com.moti.backend.core.show.presentation.socket.SeatPublisher;
-import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.*;
 
 import lombok.RequiredArgsConstructor;
 
