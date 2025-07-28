@@ -1,7 +1,6 @@
 package com.moti.backend.core.show.presentation.socket.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.moti.backend.core.show.domain.type.EventType;
 import com.moti.backend.core.show.domain.type.SeatStatus;
@@ -55,49 +54,5 @@ public class SeatResponseDTO {
 				.timestamp(timestamp)
 				.build();
 		}
-	}
-
-	@Getter
-	@Builder
-	public static class InitialSeatResponse {
-		private EventType eventType;
-		private Long showScheduleId;
-		private List<SeatInfo> seatIds;
-		private LocalDateTime timestamp;
-
-		public static InitialSeatResponse from(EventType eventType, Long showScheduleId, List<SeatInfo> seatInfoList,
-			LocalDateTime timestamp) {
-			return InitialSeatResponse.builder()
-				.eventType(eventType)
-				.showScheduleId(showScheduleId)
-				.seatIds(seatInfoList)
-				.timestamp(timestamp)
-				.build();
-		}
-	}
-
-	@Getter
-	@Builder
-	public static class SeatInfo {
-		private Long seatId;
-		private String status;
-		private Long selectedCount;
-
-		public static SeatInfo from(Long seatId, String status, Long selectedCount) {
-			return SeatInfo.builder()
-				.seatId(seatId)
-				.status(status)
-				.selectedCount(selectedCount)
-				.build();
-		}
-	}
-
-	@Getter
-	@Builder
-	public static class InitialSeatStatusResponse {
-		private EventType eventType;
-		private Long showScheduleId;
-		private List<SeatInfo> seats;
-		private LocalDateTime timestamp;
 	}
 }
