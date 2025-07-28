@@ -15,7 +15,7 @@ import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Repository;
 
 import com.moti.backend.core.show.domain.type.SeatStatus;
-import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.SeatInfo;
+import com.moti.backend.core.show.presentation.socket.dto.SeatInfoDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -126,10 +126,10 @@ public class SeatCacheRepository {
 	}
 
 	// 해당 공연의 UI 상태를 반환하는 로직(상태 + count)
-	public List<SeatInfo> getSeatsStatusForShowSchedule(Long showScheduleId) {
+	public List<SeatInfoDTO> getSeatsStatusForShowSchedule(Long showScheduleId) {
 		String key = String.format(SEAT_STATUS_KEY, showScheduleId);
 		Map<String, String> seatStatusMap = hashOps.entries(key);
-		List<SeatInfo> result = new ArrayList<>();
+		List<SeatInfoDTO> result = new ArrayList<>();
 
 		// 해당 공연의 모든 좌석 상태를 가져오는 로직
 		for (String seatId : seatStatusMap.keySet()) {
@@ -139,7 +139,7 @@ public class SeatCacheRepository {
 			if (status.equals(SeatStatus.SELECTED.toString())) {
 				count = getSeatsCountForShowSchedule(showScheduleId, Long.valueOf(seatId));
 			}
-			result.add(SeatInfo.from(Long.valueOf(seatId), status, count));
+			result.add(SeatInfoDTO.from(Long.valueOf(seatId), SeatStatus.valueOf(status), count));
 		}
 
 		return result;
@@ -149,5 +149,20 @@ public class SeatCacheRepository {
 	private Long getSeatsCountForShowSchedule(Long showScheduleId, Long seatId) {
 		String key = String.format(SEAT_SELECT_MEMBER_KEY, showScheduleId) + ":" + seatId;
 		return setOps.size(key);
+	}
+
+	//최적화 키워드: Pipeline
+	public List<Long> getSelectedSeats(Long showScheduleId, Long memberId) {
+		String key = String.format(SEAT_SELECT_MEMBER_KEY, showScheduleId);
+
+		List<Long> seatIds = new ArrayList<>();
+		Map<String, String> seatStatusMap = hashOps.entries(String.format(SEAT_STATUS_KEY, showScheduleId));
+		for (String seatId : seatStatusMap.keySet()) {
+			String seatMemberKey = key + ":" + seatId;
+			if (setOps.isMember(seatMemberKey, String.valueOf(memberId))) {
+				seatIds.add(Long.valueOf(seatId));
+			}
+		}
+		return seatIds;
 	}
 }

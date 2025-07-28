@@ -2,6 +2,7 @@ package com.moti.backend.core.show.presentation.socket;
 
 import static com.moti.backend.core.show.presentation.socket.dto.SeatRequestDTO.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -14,8 +15,9 @@ import org.springframework.stereotype.Controller;
 import com.moti.backend.core.member.domain.entity.Member;
 import com.moti.backend.core.member.exception.MemberNotFoundException;
 import com.moti.backend.core.show.application.SeatStatusService;
-import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO;
+import com.moti.backend.core.show.presentation.socket.dto.SeatInfoDTO;
 import com.moti.backend.core.show.presentation.socket.dto.SeatResponseDTO.SeatToggleResponse;
+import com.moti.backend.core.show.presentation.socket.dto.SessionInitResponseDTO;
 import com.moti.backend.global.exception.JwtAuthenticationException;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +32,7 @@ public class SeatGateway {
 	private final SimpMessagingTemplate messagingTemplate;
 
 	@SubscribeMapping("/show-schedule/{showScheduleId}/session-init")
-	public List<SeatResponseDTO.SeatInfo> handleSeatSubscription(@DestinationVariable Long showScheduleId,
+	public SessionInitResponseDTO handleSessionInit(@DestinationVariable Long showScheduleId,
 		StompHeaderAccessor headerAccessor) {
 
 		Member member = (Member)headerAccessor.getSessionAttributes().get("user");
@@ -40,7 +42,26 @@ public class SeatGateway {
 			throw new MemberNotFoundException("인증되지 않은 사용자입니다. 세션: " + headerAccessor.getSessionId());
 		}
 
-		return seatStatusService.getSeatStatusByShowScheduleId(showScheduleId);
+		// 공연 일정 ID로 좌석 상태 조회
+		List<SeatInfoDTO> seatStatusByShowScheduleId = seatStatusService.getSeatStatusByShowScheduleId(
+			showScheduleId);
+
+		// 세션 정보 생성 (연결 후 바로 구독한다고 가정)
+		SessionInitResponseDTO.SessionInfo sessionInfo = SessionInitResponseDTO.SessionInfo.from(
+			headerAccessor.getSessionId(),
+			LocalDateTime.now());
+
+		// member ID로 선택된 좌석 및 홀드된 좌석 조회
+		SessionInitResponseDTO.SeatSelection selectedAndHeldSeats = seatStatusService.getSelectedAndHeldSeats(
+			showScheduleId, member.getId());
+
+		return SessionInitResponseDTO.from(
+			showScheduleId,
+			seatStatusByShowScheduleId,
+			sessionInfo,
+			SessionInitResponseDTO.UserContext.from(selectedAndHeldSeats),
+			LocalDateTime.now()
+		);
 	}
 
 	@MessageMapping("/seat/select")

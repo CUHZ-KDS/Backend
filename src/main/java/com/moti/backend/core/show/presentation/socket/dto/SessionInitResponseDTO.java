@@ -50,14 +50,11 @@ public class SessionInitResponseDTO {
 	public static class SeatSelection {
 		private final List<Long> selectedSeats;
 		private final HeldSeats heldSeats;
-		private final List<Long> reservedSeats;
 
-		public static SeatSelection from(List<Long> selectedSeats, HeldSeats heldSeats,
-			List<Long> reservedSeats) {
+		public static SeatSelection from(List<Long> selectedSeats, HeldSeats heldSeats) {
 			return SeatSelection.builder()
 				.selectedSeats(selectedSeats)
 				.heldSeats(heldSeats)
-				.reservedSeats(reservedSeats)
 				.build();
 		}
 	}
