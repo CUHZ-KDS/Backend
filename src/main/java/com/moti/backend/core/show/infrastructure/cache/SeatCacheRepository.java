@@ -133,6 +133,7 @@ public class SeatCacheRepository {
 
 		// 해당 공연의 모든 좌석 상태를 가져오는 로직
 		for (String seatId : seatStatusMap.keySet()) {
+			System.out.println("seatId = " + seatId);
 			String status = seatStatusMap.get(seatId);
 			Long count = 0L;
 			if (status.equals(SeatStatus.SELECTED.toString())) {
@@ -146,7 +147,7 @@ public class SeatCacheRepository {
 
 	// 해당 공연의 모든 좌석 선택된 인원 수를 가져오는 로직
 	private Long getSeatsCountForShowSchedule(Long showScheduleId, Long seatId) {
-		String key = String.format(SEAT_SELECT_MEMBER_KEY, showScheduleId, seatId);
+		String key = String.format(SEAT_SELECT_MEMBER_KEY, showScheduleId) + ":" + seatId;
 		return setOps.size(key);
 	}
 }
