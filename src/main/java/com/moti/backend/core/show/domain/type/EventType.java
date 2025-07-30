@@ -9,5 +9,6 @@ public enum EventType {
 	//todo: error 이벤트 타입은 분류해야할지?
 	SEAT_SELECT_ERROR,
 	SEAT_LIMIT_ERROR,
-	AUTH_ERROR
+	AUTH_ERROR,
+	SESSION_INITIALIZED
 }

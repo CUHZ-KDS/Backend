@@ -28,9 +28,10 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 	@Override
 	public Message<?> preSend(Message<?> message, MessageChannel channel) {
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+		StompCommand command = accessor.getCommand();
 
 		// CONNECT 명령어에서 인증 처리
-		if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+		if (StompCommand.CONNECT.equals(command)) {
 			return authenticateUser(accessor, message);
 		}
 
@@ -53,6 +54,7 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
 			// WebSocket 세션에 저장
 			accessor.getSessionAttributes().put("user", member);
+			
 			return message;
 		} catch (Exception e) {
 			log.error("WebSocket 인증 실패 - 세션: {}, 오류: {}", accessor.getSessionId(), e.getMessage());
@@ -70,5 +72,4 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 		}
 		throw new JwtAuthenticationException("Authorization header not found");
 	}
-
 }
